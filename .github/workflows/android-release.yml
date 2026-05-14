@@ -1,0 +1,88 @@
+name: Android Release APK
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build web (Angular production)
+        run: npm run build:web
+
+      - name: Sync Capacitor Android
+        run: npx cap sync android
+
+      - name: Make gradlew executable
+        run: chmod +x android/gradlew
+
+      - name: Decode keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::error::Secret KEYSTORE_BASE64 is missing. Configure it in repo Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 -d > android/app/release.keystore
+
+      - name: Build release APK
+        working-directory: android
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          ./gradlew assembleRelease --no-daemon --stacktrace \
+            -PMYAPP_RELEASE_STORE_FILE=release.keystore \
+            -PMYAPP_RELEASE_STORE_PASSWORD="$KEYSTORE_PASSWORD" \
+            -PMYAPP_RELEASE_KEY_ALIAS="$KEY_ALIAS" \
+            -PMYAPP_RELEASE_KEY_PASSWORD="$KEY_PASSWORD"
+
+      - name: Rename release APK
+        run: |
+          mkdir -p dist
+          cp android/app/build/outputs/apk/release/app-release.apk \
+             "dist/agendaai-${GITHUB_REF_NAME}.apk"
+
+      - name: Upload release APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: agendaai-release-${{ github.ref_name }}
+          path: dist/agendaai-${{ github.ref_name }}.apk
+          retention-days: 90
+          if-no-files-found: error
+
+      - name: Attach APK to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/agendaai-${{ github.ref_name }}.apk
+          generate_release_notes: true

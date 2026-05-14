@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>agendaAI</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h2>Entrar</h2>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <ion-item>
+      <ion-label position="stacked">E-mail</ion-label>
+      <ion-input type="email" formControlName="email" autocomplete="email"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Senha</ion-label>
+      <ion-input type="password" formControlName="senha" autocomplete="current-password"></ion-input>
+    </ion-item>
+
+    <ion-button
+      class="ion-margin-top"
+      expand="block"
+      type="submit"
+      [disabled]="form.invalid || loading"
+    >
+      <ion-spinner *ngIf="loading" name="dots"></ion-spinner>
+      <span *ngIf="!loading">Entrar</span>
+    </ion-button>
+
+    <ion-button expand="block" fill="clear" routerLink="/register">
+      Criar conta
+    </ion-button>
+  </form>
+</ion-content>

@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Meus agendamentos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-spinner
+    *ngIf="loading"
+    name="dots"
+    style="display:block;margin:2rem auto;"
+  ></ion-spinner>
+
+  <ion-list *ngIf="!loading">
+    <ion-item *ngFor="let a of agendamentos">
+      <ion-label>
+        <h2>{{ a.paciente?.nome }} - {{ a.servico?.nome }}</h2>
+        <p>{{ a.profissional?.nome }}</p>
+        <p>{{ format(a.dataHoraInicio) }}</p>
+        <ion-badge [color]="statusColor(a.status)">{{ a.status }}</ion-badge>
+      </ion-label>
+      <ion-button
+        *ngIf="a.status === 'AGENDADO'"
+        slot="end"
+        fill="clear"
+        color="danger"
+        (click)="cancelar(a)"
+      >
+        Cancelar
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+  <div
+    class="ion-padding ion-text-center"
+    *ngIf="!loading && agendamentos.length === 0"
+  >
+    <p>Nenhum agendamento ainda.</p>
+  </div>
+</ion-content>

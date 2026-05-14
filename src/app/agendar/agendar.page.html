@@ -1,0 +1,83 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Novo agendamento</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-item>
+    <ion-label position="stacked">Paciente</ion-label>
+    <ion-select [(ngModel)]="pacienteId" interface="popover">
+      <ion-select-option *ngFor="let p of pacientes" [value]="p.id">
+        {{ p.nome }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Pediatra</ion-label>
+    <ion-select
+      [(ngModel)]="profissionalId"
+      (ionChange)="carregarSlots()"
+      interface="popover"
+    >
+      <ion-select-option *ngFor="let p of profissionais" [value]="p.id">
+        {{ p.nome }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Servico</ion-label>
+    <ion-select
+      [(ngModel)]="servicoId"
+      (ionChange)="carregarSlots()"
+      interface="popover"
+    >
+      <ion-select-option *ngFor="let s of servicos" [value]="s.id">
+        {{ s.nome }} ({{ s.duracaoMinutos }}min)
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Data</ion-label>
+    <ion-input
+      type="date"
+      [(ngModel)]="data"
+      (ionChange)="carregarSlots()"
+    ></ion-input>
+  </ion-item>
+
+  <h3 class="ion-margin-top">Horarios disponiveis</h3>
+
+  <ion-spinner *ngIf="loadingSlots" name="dots"></ion-spinner>
+
+  <div *ngIf="!loadingSlots && slots.length === 0" class="ion-padding ion-text-center">
+    <p>Selecione pediatra, servico e data para ver horarios.</p>
+  </div>
+
+  <div class="slot-grid">
+    <ion-button
+      *ngFor="let s of slots"
+      [fill]="slotSelecionado === s ? 'solid' : 'outline'"
+      size="small"
+      (click)="slotSelecionado = s"
+    >
+      {{ formatHora(s.inicio) }}
+    </ion-button>
+  </div>
+
+  <ion-button
+    class="ion-margin-top"
+    expand="block"
+    (click)="confirmar()"
+    [disabled]="!slotSelecionado || salvando"
+  >
+    <ion-spinner *ngIf="salvando" name="dots"></ion-spinner>
+    <span *ngIf="!salvando">Confirmar agendamento</span>
+  </ion-button>
+</ion-content>

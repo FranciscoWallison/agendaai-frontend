@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Meus pacientes</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon name="log-out-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="ion-padding" *ngIf="user">
+    <p>Ola, {{ user.nome }}!</p>
+  </div>
+
+  <ion-list *ngIf="!loading">
+    <ion-item *ngFor="let p of pacientes">
+      <ion-label>
+        <h2>{{ p.nome }}</h2>
+        <p>Nascimento: {{ p.dataNascimento }}</p>
+      </ion-label>
+      <ion-button slot="end" fill="clear" (click)="agendar(p)">
+        Agendar
+      </ion-button>
+      <ion-button slot="end" fill="clear" color="danger" (click)="remover(p)">
+        <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+  <div class="ion-padding ion-text-center" *ngIf="!loading && pacientes.length === 0">
+    <p>Nenhum paciente cadastrado.</p>
+  </div>
+
+  <ion-spinner *ngIf="loading" name="dots" style="display:block;margin:2rem auto;"></ion-spinner>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="novoPaciente()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <ion-button expand="block" fill="clear" routerLink="/meus-agendamentos" class="ion-margin">
+    Ver meus agendamentos
+  </ion-button>
+</ion-content>
