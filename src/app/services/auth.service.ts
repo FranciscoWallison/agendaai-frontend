@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 
+import { AgendaAIAppFunctions } from '@agendaai/capacitor-appfunctions';
+
 import { environment } from '../../environments/environment';
 import { LoginResponse, Responsavel } from '../models/api.models';
 import { StorageService } from './storage.service';
@@ -23,7 +25,9 @@ export class AuthService {
 
   async init() {
     const user = await this.storage.get<Responsavel>(KEY_USER);
+    const token = await this.storage.get<string>(KEY_TOKEN);
     if (user) this.user$.next(user);
+    if (token) await this.pushTokenToAppFunctions(token);
   }
 
   async register(data: {
@@ -51,6 +55,11 @@ export class AuthService {
     await this.storage.remove(KEY_TOKEN);
     await this.storage.remove(KEY_USER);
     this.user$.next(null);
+    try {
+      await AgendaAIAppFunctions.clearAuthToken();
+    } catch {
+      // plugin so existe em Android - silenciar em web
+    }
   }
 
   async getToken(): Promise<string | null> {
@@ -66,5 +75,17 @@ export class AuthService {
     const u: Responsavel = { ...res.responsavel };
     await this.storage.set(KEY_USER, u);
     this.user$.next(u);
+    await this.pushTokenToAppFunctions(res.accessToken);
+  }
+
+  private async pushTokenToAppFunctions(token: string) {
+    try {
+      await AgendaAIAppFunctions.setAuthToken({
+        token,
+        apiBaseUrl: this.base,
+      });
+    } catch {
+      // plugin so existe em Android - silenciar em web/iOS
+    }
   }
 }

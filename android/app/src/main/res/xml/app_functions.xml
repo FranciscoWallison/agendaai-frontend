@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Catalogo de AppFunctions. O processador KSP do androidx.appfunctions
+  gera/atualiza entries com base em metodos anotados com @AppFunction
+  no codigo Kotlin do app (ver AgendaAIFunctions.kt).
+-->
+<app-functions />

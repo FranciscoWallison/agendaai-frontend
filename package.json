@@ -17,6 +17,7 @@
   },
   "private": true,
   "dependencies": {
+    "@agendaai/capacitor-appfunctions": "file:../plugins/capacitor-appfunctions",
     "@angular/animations": "^20.0.0",
     "@angular/common": "^20.0.0",
     "@angular/compiler": "^20.0.0",
