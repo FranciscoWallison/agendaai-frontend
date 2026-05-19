@@ -1,7 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'org.jetbrains.kotlin.plugin.serialization'
-apply plugin: 'com.google.devtools.ksp'
+// AppFunctions / KSP desativados temporariamente.
+// Voltar quando: subir Kotlin pra 2.3.20+ + KSP2 + AGP 9.x + alpha09.
+// apply plugin: 'com.google.devtools.ksp'
 
 android {
     namespace = "br.com.agendaai.app"
@@ -39,13 +41,17 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = '21'
     }
 }
+
+// Args do compiler do androidx.appfunctions - obrigatorios pra gerar
+// o catalogo de funcoes que o sistema indexa.
+// KSP / AppFunctions desativados - ver comentarios acima.
 
 repositories {
     flatDir{
@@ -60,13 +66,14 @@ dependencies {
     implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
     implementation project(':capacitor-android')
 
-    // AppFunctions (Gemini)
-    implementation "androidx.appfunctions:appfunctions:$appFunctionsVersion"
-    implementation "androidx.appfunctions:appfunctions-service:$appFunctionsVersion"
-    ksp "androidx.appfunctions:appfunctions-compiler:$appFunctionsVersion"
+    // AppFunctions (Gemini) - DESATIVADO ATE ALPHA09 + AGP 9 estarem estaveis.
+    // O plugin Capacitor :agendaai-capacitor-appfunctions continua ativo e
+    // expoe AgendaAIClient/TokenStore/DTOs ao app via TS bridge.
+    // implementation "androidx.appfunctions:appfunctions:1.0.0-alpha08"
+    // implementation "androidx.appfunctions:appfunctions-service:1.0.0-alpha08"
+    // ksp "androidx.appfunctions:appfunctions-compiler:1.0.0-alpha08"
 
-    // O client+DTOs ja vem do plugin via project ':@agendaai-capacitor-appfunctions'
-    // (cap sync gera esse modulo) - aqui so garantimos a serializacao no app:
+    // Serializacao usada pelos DTOs do plugin:
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3"
 
     testImplementation "junit:junit:$junitVersion"

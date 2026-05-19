@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 
-import { AgendaAIAppFunctions } from '@agendaai/capacitor-appfunctions';
+import { AgendaAIAppFunctions } from '@chicowall/capacitor-appfunctions';
 
 import { environment } from '../../environments/environment';
 import { LoginResponse, Responsavel } from '../models/api.models';

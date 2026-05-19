@@ -2,8 +2,8 @@
 include ':capacitor-android'
 project(':capacitor-android').projectDir = new File('../node_modules/@capacitor/android/capacitor')
 
-include ':agendaai-capacitor-appfunctions'
-project(':agendaai-capacitor-appfunctions').projectDir = new File('../../plugins/capacitor-appfunctions/android')
+include ':chicowall-capacitor-appfunctions'
+project(':chicowall-capacitor-appfunctions').projectDir = new File('../node_modules/@chicowall/capacitor-appfunctions/android')
 
 include ':capacitor-app'
 project(':capacitor-app').projectDir = new File('../node_modules/@capacitor/app/android')

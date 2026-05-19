@@ -36,22 +36,23 @@
         </provider>
 
         <!--
-          AppFunctions: o Service abaixo eh gerado pelo KSP e expoe as funcoes
-          anotadas com @AppFunction no app (ver AgendaAIFunctions.kt) para o
-          sistema (Gemini / outros agents).
-        -->
-        <service
-            android:name="androidx.appfunctions.service.AppFunctionsService"
-            android:permission="android.permission.BIND_APP_FUNCTION_SERVICE"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.app.appfunctions.AppFunctionService" />
-            </intent-filter>
-        </service>
+          AppFunctions: desativado ate alpha09 + AGP 9 estarem estaveis.
+          Reativar service + meta-data quando o KSP do appfunctions-compiler
+          rodar limpo em single-module.
 
-        <meta-data
-            android:name="android.app.appfunctions"
-            android:resource="@xml/app_functions" />
+          <service
+              android:name="androidx.appfunctions.service.AppFunctionsService"
+              android:permission="android.permission.BIND_APP_FUNCTION_SERVICE"
+              android:exported="true">
+              <intent-filter>
+                  <action android:name="android.app.appfunctions.AppFunctionService" />
+              </intent-filter>
+          </service>
+
+          <meta-data
+              android:name="android.app.appfunctions"
+              android:resource="@xml/app_functions" />
+        -->
     </application>
 
     <!-- Permissions -->

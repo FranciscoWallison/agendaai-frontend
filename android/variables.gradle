@@ -1,6 +1,8 @@
 ext {
-    // AppFunctions exige Android U (API 35+).
-    minSdkVersion = 35
+    // AppFunctions exige Android U (API 35+). Como AppFunctions esta
+    // temporariamente desativado no app, voltamos minSdk=24 pra cobrir
+    // mais devices.
+    minSdkVersion = 24
     compileSdkVersion = 36
     targetSdkVersion = 36
     androidxActivityVersion = '1.11.0'
@@ -15,8 +17,10 @@ ext {
     androidxEspressoCoreVersion = '3.7.0'
     cordovaAndroidVersion = '14.0.1'
 
-    // AppFunctions (Gemini)
-    kotlinVersion = '2.0.21'
-    kspVersion = '2.0.21-1.0.28'
-    appFunctionsVersion = '1.0.0-alpha09'
+    // AppFunctions (Gemini).
+    // alpha09 exige AGP 9.1 + compileSdk 37; alpha08 funciona com AGP 8.x.
+    // alpha07 nao tinha @AppFunction como existe hoje - usar alpha08.
+    kotlinVersion = '2.1.21'
+    kspVersion = '2.1.21-2.0.1'
+    appFunctionsVersion = '1.0.0-alpha08'
 }
