@@ -11,8 +11,10 @@
     "test": "ng test",
     "lint": "ng lint",
     "build:web": "ng build --configuration production",
+    "build:web:emulator": "ng build --configuration emulator",
     "cap:sync": "cap sync android",
-    "build:android:debug": "npm run build:web && cap sync android && cd android && ./gradlew assembleDebug",
+    "build:android:debug": "npm run build:web:emulator && cap sync android && cd android && ./gradlew assembleDebug",
+    "build:android:debug:prod": "npm run build:web && cap sync android && cd android && ./gradlew assembleDebug",
     "build:android:release": "npm run build:web && cap sync android && cd android && ./gradlew assembleRelease"
   },
   "private": true,

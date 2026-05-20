@@ -64,6 +64,18 @@
               "sourceMap": true,
               "namedChunks": true
             },
+            "emulator": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.emulator.ts"
+                }
+              ],
+              "optimization": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "extractLicenses": false
+            },
             "ci": {
               "progress": false
             }
@@ -136,7 +148,8 @@
   "cli": {
     "schematicCollections": [
       "@ionic/angular-toolkit"
-    ]
+    ],
+    "analytics": "631acf0c-ff4a-458e-8374-45635ea09b1e"
   },
   "schematics": {
     "@ionic/angular-toolkit:component": {

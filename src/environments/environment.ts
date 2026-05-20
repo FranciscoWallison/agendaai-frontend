@@ -1,6 +1,7 @@
-// Dev: emulador Android usa 10.0.2.2 para falar com o host.
-// Em device fisico via USB, rode `adb reverse tcp:3000 tcp:3000` e use 'http://localhost:3000'.
+// Browser dev (ng serve). Backend e banco sobem via Docker Desktop em localhost:3000.
+// Para emulador Android, use `--configuration emulator` (-> environment.emulator.ts).
+// Para producao, use `--configuration production` (-> environment.prod.ts).
 export const environment = {
   production: false,
-  apiUrl: 'http://10.0.2.2:3000',
+  apiUrl: 'http://localhost:3000',
 };

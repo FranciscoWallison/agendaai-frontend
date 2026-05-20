@@ -19,9 +19,7 @@ export class ApiService {
 
   // ---- health-check ----
   healthCheck() {
-    return firstValueFrom(
-      this.http.get(`${this.base}/`, { responseType: 'text' }),
-    );
+    return firstValueFrom(this.http.get(`${this.base}/health`));
   }
 
   // ---- pacientes ----
