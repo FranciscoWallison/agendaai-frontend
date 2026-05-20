@@ -14,6 +14,37 @@ import { ChatMessage } from '../models/chat.models';
 const KEY_GEMINI = 'agendaai.gemini.apiKey';
 const MODEL = 'gemini-2.5-flash';
 
+const RETRY_BACKOFF_MS = [1000, 2000, 4000];
+
+function isTransientGeminiError(e: unknown): boolean {
+  const err = e as { error?: { code?: number; status?: string }; status?: number | string; code?: number };
+  const code = err?.error?.code ?? err?.status ?? err?.code;
+  const status = err?.error?.status ?? (typeof err?.status === 'string' ? err.status : undefined);
+  return (
+    code === 503 ||
+    code === 429 ||
+    code === 500 ||
+    status === 'UNAVAILABLE' ||
+    status === 'RESOURCE_EXHAUSTED' ||
+    status === 'INTERNAL'
+  );
+}
+
+async function withRetry<T>(fn: () => Promise<T>): Promise<T> {
+  for (let attempt = 0; attempt <= RETRY_BACKOFF_MS.length; attempt++) {
+    try {
+      return await fn();
+    } catch (e) {
+      const isLast = attempt === RETRY_BACKOFF_MS.length;
+      if (isLast || !isTransientGeminiError(e)) throw e;
+      const wait = RETRY_BACKOFF_MS[attempt];
+      console.warn(`[Gemini] erro transiente, retry em ${wait}ms`, e);
+      await new Promise((r) => setTimeout(r, wait));
+    }
+  }
+  throw new Error('unreachable');
+}
+
 const SYSTEM_INSTRUCTION = `
 Voce e o assistente do agendaAI, um app de agendamento de consultas pediatricas.
 - Responda em portugues do Brasil de forma curta e direta.
@@ -85,11 +116,13 @@ export class GeminiService {
   async testarConexao(): Promise<{ ok: true } | { ok: false; erro: string }> {
     try {
       const c = await this.ensureClient();
-      await c.models.generateContent({
-        model: MODEL,
-        contents: 'ping',
-        config: { maxOutputTokens: 5 },
-      });
+      await withRetry(() =>
+        c.models.generateContent({
+          model: MODEL,
+          contents: 'ping',
+          config: { maxOutputTokens: 5 },
+        }),
+      );
       return { ok: true };
     } catch (e: any) {
       return { ok: false, erro: e?.message ?? 'Falha desconhecida' };
@@ -119,14 +152,16 @@ export class GeminiService {
 
     // 2. Loop de function-calling. Limite de seguranca: 8 hops.
     for (let hop = 0; hop < 8; hop++) {
-      const resp = await client.models.generateContent({
-        model: MODEL,
-        contents: this.history,
-        config: {
-          systemInstruction: SYSTEM_INSTRUCTION,
-          tools: [{ functionDeclarations: TOOLS }],
-        },
-      });
+      const resp = await withRetry(() =>
+        client.models.generateContent({
+          model: MODEL,
+          contents: this.history,
+          config: {
+            systemInstruction: SYSTEM_INSTRUCTION,
+            tools: [{ functionDeclarations: TOOLS }],
+          },
+        }),
+      );
 
       const calls: FunctionCall[] = resp.functionCalls ?? [];
       const text = resp.text ?? '';

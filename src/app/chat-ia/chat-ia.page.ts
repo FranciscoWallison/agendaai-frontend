@@ -87,17 +87,31 @@ export class ChatIaPage implements OnInit, AfterViewChecked {
         this.mensagens.push(m);
       });
     } catch (e: any) {
-      const msg = e?.message ?? 'Erro desconhecido';
+      this.mensagens = this.mensagens.filter((m) => !(m.role === 'tool' && m.loading));
       const tt = await this.toast.create({
-        message: msg,
-        color: 'danger',
+        message: this.mensagemAmigavelErro(e),
+        color: 'warning',
         duration: 3500,
       });
       await tt.present();
-      this.mensagens.push({ role: 'model', text: `(erro: ${msg})` });
     } finally {
       this.enviando = false;
     }
+  }
+
+  private mensagemAmigavelErro(e: any): string {
+    const code = e?.error?.code ?? e?.status ?? e?.code;
+    const status = e?.error?.status;
+    if (code === 503 || status === 'UNAVAILABLE') {
+      return 'Servico do Gemini sobrecarregado. Tente de novo em instantes.';
+    }
+    if (code === 429 || status === 'RESOURCE_EXHAUSTED') {
+      return 'Limite de uso do Gemini atingido. Aguarde um momento.';
+    }
+    if (code === 401 || code === 403) {
+      return 'API key do Gemini invalida. Verifique em Settings.';
+    }
+    return e?.message ?? 'Falha ao falar com o assistente.';
   }
 
   usarSugestao(s: string) {
