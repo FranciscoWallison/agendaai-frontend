@@ -2,6 +2,9 @@
   <ion-toolbar color="primary">
     <ion-title>Meus pacientes</ion-title>
     <ion-buttons slot="end">
+      <ion-button routerLink="/settings" title="Configuracoes">
+        <ion-icon name="settings-outline" slot="icon-only"></ion-icon>
+      </ion-button>
       <ion-button (click)="logout()">
         <ion-icon name="log-out-outline" slot="icon-only"></ion-icon>
       </ion-button>
@@ -47,5 +50,15 @@
 
   <ion-button expand="block" fill="clear" routerLink="/meus-agendamentos" class="ion-margin">
     Ver meus agendamentos
+  </ion-button>
+
+  <ion-button
+    expand="block"
+    color="tertiary"
+    routerLink="/chat-ia"
+    class="ion-margin"
+  >
+    <ion-icon name="sparkles-outline" slot="start"></ion-icon>
+    Chat com a IA
   </ion-button>
 </ion-content>

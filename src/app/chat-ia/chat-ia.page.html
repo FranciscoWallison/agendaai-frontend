@@ -1,0 +1,73 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Chat IA</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="resetar()" title="Nova conversa">
+        <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="chat-content">
+  <div #scrollContent class="messages">
+    <div
+      *ngFor="let m of mensagens"
+      class="bubble"
+      [class.user]="m.role === 'user'"
+      [class.model]="m.role === 'model'"
+      [class.tool]="m.role === 'tool'"
+    >
+      <ng-container *ngIf="m.role === 'tool'">
+        <ion-icon
+          [name]="m.loading ? 'time-outline' : 'checkmark-circle-outline'"
+        ></ion-icon>
+        <code>{{ m.text }}</code>
+      </ng-container>
+      <ng-container *ngIf="m.role !== 'tool'">
+        <pre>{{ m.text }}</pre>
+      </ng-container>
+    </div>
+
+    <div *ngIf="enviando" class="bubble model loading">
+      <ion-spinner name="dots"></ion-spinner>
+    </div>
+  </div>
+
+  <div class="suggestions" *ngIf="!enviando && mensagens.length <= 1">
+    <ion-chip
+      *ngFor="let s of sugestoes"
+      (click)="usarSugestao(s)"
+      color="primary"
+      outline="true"
+    >
+      {{ s }}
+    </ion-chip>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-item lines="none">
+      <ion-textarea
+        [(ngModel)]="texto"
+        placeholder="Pergunte algo..."
+        rows="1"
+        autoGrow="true"
+        [disabled]="enviando"
+      ></ion-textarea>
+      <ion-button
+        slot="end"
+        (click)="enviar()"
+        [disabled]="!texto.trim() || enviando"
+        fill="solid"
+        color="primary"
+      >
+        <ion-icon name="send" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-toolbar>
+</ion-footer>

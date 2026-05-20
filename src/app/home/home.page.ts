@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AlertController, IonicModule, ToastController } from '@ionic/angular';
 
 import { ApiService } from '../services/api.service';
@@ -11,7 +11,7 @@ import { Paciente, Responsavel } from '../models/api.models';
 @Component({
   standalone: true,
   selector: 'app-home',
-  imports: [CommonModule, FormsModule, IonicModule],
+  imports: [CommonModule, FormsModule, IonicModule, RouterModule],
   templateUrl: './home.page.html',
 })
 export class HomePage implements OnInit {

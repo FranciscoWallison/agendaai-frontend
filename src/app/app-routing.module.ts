@@ -33,6 +33,18 @@ const routes: Routes = [
         (m) => m.MeusAgendamentosPage,
       ),
   },
+  {
+    path: 'chat-ia',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./chat-ia/chat-ia.page').then((m) => m.ChatIaPage),
+  },
+  {
+    path: 'settings',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./settings/settings.page').then((m) => m.SettingsPage),
+  },
 ];
 
 @NgModule({

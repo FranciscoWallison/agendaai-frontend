@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Configuracoes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h2>IA (Gemini)</h2>
+  <p>
+    Cole sua API key gratuita do Google AI Studio em
+    <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">
+      aistudio.google.com/apikey
+    </a>
+    (sem cartao de credito).
+  </p>
+
+  <ion-item>
+    <ion-label position="stacked">API key</ion-label>
+    <ion-input
+      type="password"
+      [(ngModel)]="apiKey"
+      autocomplete="off"
+      placeholder="AIza..."
+    ></ion-input>
+  </ion-item>
+
+  <ion-button
+    class="ion-margin-top"
+    expand="block"
+    (click)="salvar()"
+    [disabled]="!apiKey.trim()"
+  >
+    Salvar
+  </ion-button>
+
+  <ion-button
+    expand="block"
+    fill="outline"
+    (click)="testar()"
+    [disabled]="!apiKey.trim() || testando"
+  >
+    <ion-spinner *ngIf="testando" name="dots"></ion-spinner>
+    <span *ngIf="!testando">Testar conexao</span>
+  </ion-button>
+
+  <ion-button
+    *ngIf="jaSalvou"
+    expand="block"
+    fill="clear"
+    color="danger"
+    (click)="limpar()"
+  >
+    Remover chave
+  </ion-button>
+
+  <ion-note color="medium">
+    <p class="ion-margin-top">
+      <strong>Free tier:</strong> 1.500 requisicoes por dia. A chave fica
+      armazenada apenas no dispositivo.
+    </p>
+  </ion-note>
+</ion-content>
